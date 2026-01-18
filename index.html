@@ -12,138 +12,895 @@
     .wrap{ max-width:1100px; margin:18px auto; padding:0 14px; }
     .card{ background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:0 8px 24px rgba(17,24,39,.06); }
 
-    .top{ display:flex; gap:16px; align-items:center; justify-content:space-between; padding:16px 18px; }
+    /* ---------- LOGIN ---------- */
+    .login-wrap{ max-width:520px; margin:60px auto; padding:0 14px; }
+    .login-card{ padding:18px; }
+    .login-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+    .login-head h1{ margin:0; font-size:18px; }
+    .login-head .hint{ font-size:12px; color:var(--muted); }
+    .field{ display:flex; flex-direction:column; gap:6px; margin:12px 0; }
+    .field label{ font-size:12px; color:var(--muted); font-weight:700; }
+    .field input{
+      padding:10px 12px; border:1px solid var(--line); border-radius:10px; font-size:14px; outline:none;
+      background:#fff;
+    }
+    .row{ display:flex; gap:10px; align-items:center; justify-content:space-between; margin-top:14px; }
+    .btn{
+      border:1px solid var(--line); background:#fff; border-radius:10px; padding:8px 12px;
+      cursor:pointer; font-weight:700; font-size:13px;
+    }
+    .btn.primary{ background:#2f6da5; border-color:#2f6da5; color:#fff; }
+    .error{ margin-top:10px; font-size:12px; color:#c0392b; font-weight:700; display:none; }
+
+    /* ---------- DASHBOARD HEADER (fixed layout) ---------- */
+    .top{
+      display:grid;
+      grid-template-columns: 170px 1fr 120px;
+      gap:16px;
+      align-items:start;
+      padding:16px 18px 10px;
+    }
     .stamp{ display:flex; flex-direction:column; gap:4px; }
     .stamp .t{ font-size:12px; color:var(--muted); }
     .stamp .n{ font-size:44px; font-weight:800; line-height:1; color:#2f6da5; }
     .stamp .d{ font-size:18px; font-weight:700; text-transform:lowercase; }
 
-    .title{ text-align:center; flex:1; padding:0 10px; }
-    .title h1{ margin:0; font-size:16px; font-weight:700; }
+    .title{ text-align:center; padding:0 10px; }
+    .title h1{ margin:0; font-size:14px; font-weight:700; }
     .title p{ margin:6px 0 0; font-size:12px; color:var(--muted); }
 
-    .legend{ display:flex; gap:14px; justify-content:center; padding:10px 18px 16px; }
-    .pill{ display:flex; align-items:center; gap:8px; padding:8px 10px; border:1px solid var(--line); border-radius:999px; font-size:12px; color:var(--muted); }
+    .top-actions{ display:flex; justify-content:flex-end; align-items:flex-start; padding-top:6px; }
+
+    .legend{ display:flex; gap:12px; justify-content:center; padding:8px 18px 14px; }
+    .pill{ display:flex; align-items:center; gap:8px; padding:7px 10px; border:1px solid var(--line); border-radius:999px; font-size:12px; color:var(--muted); }
     .dot{ width:10px; height:10px; border-radius:50%; display:inline-block; }
     .g{ background:#33a852; }
     .y{ background:#f4c542; }
     .r{ background:#e74c3c; }
 
-    .table-scroll{ overflow-x:auto; -webkit-overflow-scrolling: touch; }
+    /* ---------- TABLE ---------- */
+    .table-scroll{
+      overflow-x:auto;
+      -webkit-overflow-scrolling: touch;
+      border-top:1px solid var(--line);
+      border-bottom-left-radius:14px;
+      border-bottom-right-radius:14px;
+    }
+
     table{ width:100%; border-collapse:separate; border-spacing:0; min-width:860px; }
-    thead th{ font-size:12px; color:var(--muted); font-weight:700; padding:10px 12px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:#fbfcfe; text-align:left; white-space:nowrap; }
+    thead th{
+      font-size:12px; color:var(--muted); font-weight:700;
+      padding:10px 12px; border-bottom:1px solid var(--line);
+      background:#fbfcfe; text-align:left; white-space:nowrap;
+    }
     tbody td{ padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:middle; }
     tbody tr.group{ background:#eef5ff; }
     .name{ display:flex; align-items:center; gap:10px; }
-    .caret{ width:18px; height:18px; border:1px solid var(--line); border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:pointer; background:#fff; }
+    .caret{
+      width:18px; height:18px; border:1px solid var(--line); border-radius:6px;
+      display:flex; align-items:center; justify-content:center; cursor:pointer; background:#fff;
+      user-select:none;
+    }
     .indent{ padding-left:28px; color:#4b5563; }
     .num{ text-align:right; font-variant-numeric: tabular-nums; }
     .neg{ color:#c0392b; font-weight:700; }
     .pos{ color:#1f7a3a; font-weight:700; }
-    .lights{ display:flex; gap:8px; }
+
+    .lights{ display:flex; gap:8px; justify-content:flex-start; }
     .light{ width:11px; height:11px; border-radius:50%; border:1px solid rgba(0,0,0,.08); }
+    .subrow td{ font-size:12px; color:#4b5563; }
+    .hidden{ display:none; }
 
-    @media (max-width:768px){
+    /* ---------- MOBILE ---------- */
+    @media (max-width: 768px){
       .wrap{ margin:10px auto; padding:0 10px; }
-      .top{ flex-direction:column; align-items:stretch; gap:10px; }
-      .title{ text-align:left; }
+      .top{ grid-template-columns: 1fr; gap:10px; padding:14px; }
+      .title{ text-align:left; padding:0; }
+      .stamp{ flex-direction:row; align-items:baseline; justify-content:space-between; }
+      .stamp .n{ font-size:34px; }
+      .stamp .d{ font-size:14px; }
+      .top-actions{ justify-content:flex-start; padding-top:0; }
+      .legend{ flex-wrap:wrap; justify-content:flex-start; padding:10px 12px 12px; }
+      thead th, tbody td{ padding:9px 10px; }
     }
-  </style>
+
+    @media (max-width: 420px){
+      .stamp .t{ display:none; }
+      .caret{ width:22px; height:22px; }
+      .indent{ padding-left:18px; }
+    }
+  
+    /* === CENTER STAMP CONTENT (RED BLOCK) === */
+    .top{
+      align-items:stretch;
+    }
+    .stamp{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      height:100%;
+    }
+    @media (min-width: 769px){
+      .top{ min-height:96px; }
+    }
+
+
+    
+
+    @media (max-width: 420px){
+      .login-wrap{ margin:34px auto; }
+      .login-card{ padding:18px; }
+      .brand-mark{ width:40px; height:40px; border-radius:12px; }
+      .brand-name{ font-size:16px; }
+    }
+
+
+    
+    /* === FORTEINVEST CORPORATE LOGIN (closer to forteinvest.ru) === */
+    :root{
+      --fi-navy:#0b3f6d;
+      --fi-blue:#2f6da5;
+      --fi-sky:#1a86c8;
+      --fi-bg:#f3f6fb;
+    }
+
+    body{
+      background: var(--fi-bg);
+    }
+
+    /* Top corporate header band (same motif as forteinvest.ru) */
+    body::before{
+      content:"";
+      position:fixed;
+      left:0; top:0;
+      width:100%;
+      height:190px;
+      background:
+        url("https://forteinvest.ru/i/bg-header.png") center top / cover no-repeat;
+      z-index:-2;
+    }
+
+    /* soft fade under the header band */
+    body::after{
+      content:"";
+      position:fixed;
+      left:0; top:0;
+      width:100%;
+      height:240px;
+      background: linear-gradient(180deg, rgba(11,63,109,.35), rgba(11,63,109,0));
+      z-index:-1;
+      pointer-events:none;
+    }
+
+    .login-wrap{
+      max-width:520px;
+      margin:72px auto;
+      padding:0 14px;
+    }
+
+    .login-card{
+      position:relative;
+      padding:26px 26px 22px;
+      border-radius:18px;
+      border:1px solid rgba(17,24,39,.10);
+      box-shadow:0 20px 55px rgba(17,24,39,.16);
+      overflow:hidden;
+      background:
+        radial-gradient(900px 420px at 110% -20%, rgba(47,109,165,.16), transparent 60%),
+        #ffffff;
+    }
+
+    /* subtle logo pattern like forteinvest header */
+    .login-card::before{
+      content:"";
+      position:absolute;
+      right:-40px;
+      top:-60px;
+      width:300px;
+      height:200px;
+      background:url("https://forteinvest.ru/i/logoBg.png") right top / contain no-repeat;
+      opacity:.18;
+      pointer-events:none;
+    }
+
+    .brand-vertical{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      margin-bottom:8px;
+    }
+
+    .brand-mark{
+      width:64px;
+      height:64px;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 14px 26px rgba(11,63,109,.20);
+    }
+    .brand-mark svg{ width:64px; height:64px; display:block; }
+
+    .brand-name{
+      font-weight:900;
+      letter-spacing:.4px;
+      font-size:20px;
+      color:var(--fi-navy);
+      line-height:1.15;
+      text-transform:none;
+    }
+    .brand-sub{
+      margin-top:4px;
+      font-size:12px;
+      color:#6b7280;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+
+    .brand-line{
+      height:1px;
+      background:linear-gradient(90deg, rgba(11,63,109,.30), rgba(47,109,165,.14), transparent);
+      margin:14px 0 16px;
+    }
+
+    .field label{
+      color:var(--fi-navy);
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    .field input{
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid rgba(11,63,109,.18);
+      background: rgba(255,255,255,.96);
+    }
+    .field input:focus{
+      border-color: rgba(26,134,200,.70);
+      box-shadow: 0 0 0 4px rgba(26,134,200,.14);
+    }
+
+    .row{
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .btn{
+      border-radius:12px;
+      padding:10px 14px;
+      font-weight:900;
+      letter-spacing:.2px;
+      border:1px solid rgba(11,63,109,.18);
+      color:var(--fi-navy);
+      background:#fff;
+    }
+    .btn.primary{
+      background: linear-gradient(135deg, var(--fi-navy), var(--fi-blue));
+      border-color: transparent;
+      color:#fff;
+      box-shadow: 0 12px 26px rgba(11,63,109,.22);
+    }
+    .btn.primary:hover{ filter: brightness(1.03); }
+    .btn:active{ transform: translateY(1px); }
+
+    .error{
+      display:none;
+      margin-top:12px;
+      font-size:12px;
+      font-weight:800;
+      color:#b42318;
+      background: rgba(231,76,60,.10);
+      border:1px solid rgba(231,76,60,.25);
+      border-radius:12px;
+      padding:10px 12px;
+    }
+
+    /* Keep dashboard background unchanged below the fold */
+    #dashboardScreen{
+      position:relative;
+      z-index:0;
+    }
+
+    @media (max-width: 420px){
+      body::before{ height:160px; }
+      .login-wrap{ margin:40px auto; }
+      .login-card{ padding:20px; border-radius:16px; }
+      .brand-mark{ width:56px; height:56px; border-radius:16px; }
+      .brand-mark svg{ width:56px; height:56px; }
+      .brand-name{ font-size:18px; }
+    }
+
+
+    /* === NEGATIVE VALUES === */
+    .neg{ color:#d32f2f; font-weight:700; }
+
+
+    /* === DOW labels above circles (Пт–Вт column) === */
+    .dow-wrap{ display:block; }
+    .dow-grid{
+      display:grid;
+      grid-template-columns:repeat(5, 11px);
+      gap:8px;
+      justify-content:flex-start;
+      align-items:center;
+      font-size:11px;
+      color:var(--muted);
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .dow-grid span{ display:block; text-align:center; line-height:1; }
+
+    /* make circles align exactly under weekday labels */
+    .lights{
+      display:grid;
+      grid-template-columns:repeat(5, 11px);
+      gap:8px;
+      align-items:center;
+      justify-content:flex-start;
+    }
+
+
+    /* === MOBILE CARDS MODE === */
+    .cards{ display:none; padding:12px 12px 16px; }
+    .card-item{
+      background:#fff;
+      border:1px solid rgba(17,24,39,.10);
+      border-radius:16px;
+      box-shadow:0 14px 38px rgba(17,24,39,.12);
+      padding:12px;
+      margin:10px 0;
+      position:relative;
+      overflow:hidden;
+    }
+    .card-item::before{
+      content:"";
+      position:absolute;
+      right:-70px; bottom:-90px;
+      width:240px; height:240px;
+      border-radius:50%;
+      background:radial-gradient(circle at 30% 30%, rgba(47,109,165,.18), transparent 60%);
+      pointer-events:none;
+    }
+    .card-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      position:relative;
+    }
+    .card-title{
+      font-weight:1000;
+      font-size:14px;
+      line-height:1.2;
+      color:#0b3f6d;
+    }
+    .card-delta{
+      font-weight:1000;
+      font-size:14px;
+      white-space:nowrap;
+    }
+    .btn-mini{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid rgba(11,63,109,.16);
+      background:linear-gradient(135deg, rgba(11,63,109,.06), rgba(47,109,165,.04));
+      color:#0b3f6d;
+      font-weight:1000;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn-mini:active{ transform: translateY(1px); }
+    .chev{ width:10px; height:10px; display:inline-block; }
+    .chev::before{
+      content:"";
+      display:block;
+      width:8px; height:8px;
+      border-right:2px solid #0b3f6d;
+      border-bottom:2px solid #0b3f6d;
+      transform:rotate(45deg);
+      margin-top:1px;
+    }
+    .btn-mini[aria-expanded="true"] .chev::before{
+      transform:rotate(-135deg);
+      margin-top:4px;
+    }
+
+    .card-grid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:8px;
+      margin-top:10px;
+      position:relative;
+    }
+    .mini{
+      border:1px solid rgba(17,24,39,.10);
+      border-radius:14px;
+      padding:8px 10px;
+      background:rgba(245,247,251,.72);
+    }
+    .mini .k{ font-size:11px; color:var(--muted); font-weight:900; }
+    .mini .v{ margin-top:4px; font-weight:1000; color:var(--text); }
+    .card-days{ margin-top:10px; position:relative; }
+    .card-days .dow-grid{ justify-content:flex-start; }
+    .card-days .lights{ justify-content:flex-start; margin-top:6px; }
+    .details{
+      margin-top:10px;
+      border-top:1px dashed rgba(17,24,39,.14);
+      padding-top:10px;
+      display:none;
+      position:relative;
+    }
+    .details.open{ display:block; }
+    .child{
+      margin-top:10px;
+      padding-top:10px;
+      border-top:1px dashed rgba(17,24,39,.12);
+    }
+    .child:first-child{ border-top:0; padding-top:0; margin-top:0; }
+    .child-name{ font-size:12px; color:#4b5563; font-weight:1000; margin-bottom:8px; }
+
+    @media (max-width: 768px){
+      .table-scroll{ display:none; }
+      .cards{ display:block; }
+    }
+
+</style>
 </head>
+
 <body>
-<div class="wrap">
-  <div class="card">
-    <div class="top">
-      <div class="stamp">
-        <div class="t">По состоянию на 9:00</div>
-        <div class="n">16</div>
-        <div class="d">пятница</div>
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="login-wrap">
+    <div class="card login-card">
+      <div class="brand brand-vertical">
+        <div class="brand-mark" aria-hidden="true">
+  <svg viewBox="0 0 64 64" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#0b3f6d"/>
+        <stop offset="100%" stop-color="#2f6da5"/>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="64" height="64" rx="14" fill="url(#g1)"/>
+    <path d="M14 38c14-2 22-10 36-10-6 10-18 20-36 20 2-3 2-7 0-10z"
+          fill="#ffffff"/>
+    <path d="M22 18c10 0 18 4 28 10-12 0-20 2-28 6-2-4-2-10 0-16z"
+          fill="#ffffff" opacity="0.9"/>
+  </svg>
+</div>
+        <div class="brand-text">
+          <div class="brand-name">ФортеИнвест</div>
+          <div class="brand-sub">Вход в дашборд</div>
+        </div>
       </div>
-      <div class="title">
-        <h1>Планирование рабочих заявок на отгрузку нефтепродуктов ж/д транспортом</h1>
-        <p>В период с 16 января по 20 января 2026 г. включительно</p>
-      </div>
-    </div>
-
-    <div class="legend">
-      <div class="pill"><span class="dot g"></span>Обеспечено заявками</div>
-      <div class="pill"><span class="dot y"></span>Обеспечено заявками 50%</div>
-      <div class="pill"><span class="dot r"></span>Нет заявок</div>
-    </div>
-
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>Номенклатура</th>
-            <th class="num">Исполнение</th>
-            <th class="num">График на 5 дней</th>
-            <th class="num">Обеспечение</th>
-            <th>Пт–Вт</th>
-            <th class="num">Отклонение</th>
-          </tr>
-        </thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
-  </div>
+      <div class="brand-line" aria-hidden="true"></div>
 </div>
 
-<script>
-const data = [
-  {
-    id:"diesel",
-    name:"Дизельное топливо",
-    exec:348, plan:31500, cover:22300,
-    days:["g","g","g","y","r"],
-    delta:-9200,
-    children:[
-      { name:"ДТ-Л-К5 (Тингутa)", exec:0, plan:0, cover:3300, days:["g","g","g","g","r"], delta:0 },
-      { name:"ДТ-Э-К5", exec:0, plan:0, cover:19000, days:["g","g","g","y","r"], delta:0 }
-    ]
-  },
-  {
-    id:"gasoline",
-    name:"Бензины",
-    exec:-109, plan:8700, cover:7600,
-    days:["g","g","g","g","r"],
-    delta:-1100,
-    children:[
-      { name:"АИ-92 (К4-5600т; К5-2000т)", exec:0, plan:0, cover:7600, days:["g","g","g","g","r"], delta:0 }
-    ]
-  },
-  { id:"bgs", name:"БГС/БСФ", exec:117, plan:4100, cover:12300, days:["g","g","g","g","g"], delta:8200, children:[] },
-  { id:"rt", name:"РТ/ТС", exec:-553, plan:8400, cover:16000, days:["g","g","g","g","g"], delta:7600, children:[] },
-  { id:"mazut", name:"Мазут", exec:0, plan:0, cover:2405, days:["g","g","g","g","g"], delta:2405, children:[] }
-];
+      <form id="loginForm" autocomplete="off">
+        <div class="field">
+          <label for="login">Логин</label>
+          <input id="login" name="login" type="text" placeholder="Введите логин" />
+        </div>
 
-const tbody=document.getElementById("rows");
-const fmt=n=>(n??0).toLocaleString("ru-RU");
-const light=s=>`<span class="light ${s}"></span>`;
+        <div class="field">
+          <label for="password">Пароль</label>
+          <input id="password" name="password" type="password" placeholder="Введите пароль" />
+        </div>
 
-data.forEach(g=>{
-  tbody.innerHTML+=`
-  <tr class="group">
-    <td>${g.name}</td>
-    <td class="num">${fmt(g.exec)}</td>
-    <td class="num">${fmt(g.plan)}</td>
-    <td class="num">${fmt(g.cover)}</td>
-    <td><div class="lights">${g.days.map(light).join("")}</div></td>
-    <td class="num ${g.delta<0?"neg":"pos"}">${fmt(g.delta)}</td>
-  </tr>`;
+        <div class="row">
+          <button class="btn primary" type="submit">Войти</button>
+          <button class="btn" type="button" id="clearBtn">Очистить</button>
+        </div>
 
-  (g.children||[]).forEach(k=>{
-    tbody.innerHTML+=`
-    <tr>
-      <td class="indent">↳ ${k.name}</td>
-      <td class="num">${fmt(k.exec)}</td>
-      <td class="num">${fmt(k.plan)}</td>
-      <td class="num">${fmt(k.cover)}</td>
-      <td><div class="lights">${k.days.map(light).join("")}</div></td>
-      <td class="num">${fmt(k.delta)}</td>
-    </tr>`;
-  });
-});
+        <div id="loginError" class="error">Неверный логин или пароль.</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DASHBOARD SCREEN -->
+  <div id="dashboardScreen" class="wrap" style="display:none;">
+    <div class="card">
+      <div class="top">
+        <div class="stamp">
+          <div class="t" id="asOf"></div>
+          <div class="n" id="dayNum"></div>
+          <div class="d" id="dayName"></div>
+        </div>
+
+        <div class="title">
+          <h1>Планирование рабочих заявок на отгрузку нефтепродуктов ж/д транспортом</h1>
+          <p>В период с 16 января по 20 января 2026 г. включительно</p>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn" id="logoutBtn" type="button">Выйти</button>
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="pill"><span class="dot g"></span>Обеспечено заявками</div>
+        <div class="pill"><span class="dot y"></span>Обеспечено заявками 50%</div>
+        <div class="pill"><span class="dot r"></span>Нет заявок</div>
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:320px">Номенклатура</th>
+              <th class="num" style="width:140px">Исполнение</th>
+              <th class="num" style="width:150px">График на 5 дней</th>
+              <th class="num" style="width:160px">Обеспечение</th>
+              <th style="width:190px"><div class="dow-wrap"><div class="dow-grid" id="dowHead"></div></div></th>
+              <th class="num" style="width:120px">Отклонение</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+
+      <div class="cards" id="cards"></div>
+    </div>
+  </div>
+
+  <script>
+    // -----------------------------
+    // Псевдо-авторизация на клиенте
+    // -----------------------------
+    const AUTH_LOGIN = "andril";
+    const AUTH_PASS  = "2344";
+    const AUTH_KEY   = "dash_auth_ok";
+
+    const loginScreen = document.getElementById("loginScreen");
+    const dashboardScreen = document.getElementById("dashboardScreen");
+    const loginForm = document.getElementById("loginForm");
+    const loginError = document.getElementById("loginError");
+    const clearBtn = document.getElementById("clearBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    function showDashboard() {
+      loginScreen.style.display = "none";
+      dashboardScreen.style.display = "";
+    }
+
+    function showLogin() {
+      dashboardScreen.style.display = "none";
+      loginScreen.style.display = "";
+      loginError.style.display = "none";
+      document.getElementById("login").focus();
+    }
+
+    if (sessionStorage.getItem(AUTH_KEY) === "1") showDashboard(); else showLogin();
+
+    clearBtn.addEventListener("click", () => {
+      document.getElementById("login").value = "";
+      document.getElementById("password").value = "";
+      loginError.style.display = "none";
+      document.getElementById("login").focus();
+    });
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const l = (document.getElementById("login").value || "").trim();
+      const p = (document.getElementById("password").value || "").trim();
+
+      if (l === AUTH_LOGIN && p === AUTH_PASS) {
+        sessionStorage.setItem(AUTH_KEY, "1");
+        showDashboard();
+      } else {
+        loginError.style.display = "block";
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      sessionStorage.removeItem(AUTH_KEY);
+      showLogin();
+    });
+
+    // -----------------------------
+    // Данные дашборда (полный набор)
+    // -----------------------------
+    const data = [
+      {
+        id: "diesel",
+        name: "Дизельное топливо",
+        exec: 348,
+        plan: 31500,
+        cover: 22300,
+        days: ["g","g","g","y","r"],
+        delta: -9200,
+        children: [
+          { name:"ДТ-Л-К5 (Тингутa)", exec:0, plan:0, cover:3300, days:["g","g","g","g","r"], delta:0 },
+          { name:"ДТ-Э-К5", exec:0, plan:0, cover:19000, days:["g","g","g","y","r"], delta:0 },
+        ]
+      },
+      {
+        id: "gasoline",
+        name: "Бензины",
+        exec: -109,
+        plan: 8700,
+        cover: 7600,
+        days: ["g","g","g","g","r"],
+        delta: -1100,
+        children: [
+          { name:"АИ-92 (К4-5600т; К5-2000т)", exec:0, plan:0, cover:7600, days:["g","g","g","g","r"], delta:0 },
+        ]
+      },
+      { id:"bgs", name:"БГС/БСФ", exec:117, plan:4100, cover:12300, days:["g","g","g","g","g"], delta:8200, children:[] },
+      { id:"rt", name:"РТ/ТС", exec:-553, plan:8400, cover:16000, days:["g","g","g","g","g"], delta:7600, children:[] },
+      { id:"mazut", name:"Мазут", exec:0, plan:0, cover:2405, days:["g","g","g","g","g"], delta:2405, children:[] },
+    ];
+
+    // Рендер таблицы
+    const fmt = (n) => (n ?? 0).toLocaleString("ru-RU");
+    const light = (s) => `<span class="light ${s==='g'?'g':s==='y'?'y':'r'}"></span>`;
+    const deltaClass = (n) => n < 0 ? "neg" : "pos";
+    const tbody = document.getElementById("rows");
+
+    function renderTable() {
+      tbody.innerHTML = "";
+
+      data.forEach(group => {
+        const hasKids = (group.children && group.children.length);
+        const gid = "g_" + group.id;
+
+        const tr = document.createElement("tr");
+        tr.className = "group";
+        tr.innerHTML = `
+          <td>
+            <div class="name">
+              ${hasKids ? `<div class="caret" data-toggle="${gid}">▾</div>` : `<div style="width:18px"></div>`}
+              <div>${group.name}</div>
+            </div>
+          </td>
+          <td class="num">${fmt(group.exec)}</td>
+          <td class="num">${fmt(group.plan)}</td>
+          <td class="num">${fmt(group.cover)}</td>
+          <td>
+            <div class="lights">
+              ${group.days.map(light).join("")}
+            </div>
+          </td>
+          <td class="num ${deltaClass(group.delta)}">${fmt(group.delta)}</td>
+        `;
+        tbody.appendChild(tr);
+
+        (group.children || []).forEach((kid) => {
+          const tr2 = document.createElement("tr");
+          tr2.className = "subrow";
+          tr2.dataset.parent = gid;
+          tr2.innerHTML = `
+            <td class="indent">↳ ${kid.name}</td>
+            <td class="num">${fmt(kid.exec)}</td>
+            <td class="num">${fmt(kid.plan)}</td>
+            <td class="num">${fmt(kid.cover)}</td>
+            <td>
+              <div class="lights">
+                ${kid.days.map(light).join("")}
+              </div>
+            </td>
+            <td class="num ${deltaClass(kid.delta)}">${fmt(kid.delta)}</td>
+          `;
+          tbody.appendChild(tr2);
+        });
+      });
+    }
+
+    renderTable();
+
+    // -----------------------------
+    // Mobile cards rendering
+    // -----------------------------
+    function dowLabelsHTML(asDate, TZ){
+      // use Intl weekday short in ru-RU, then normalize (remove dot)
+      const fmtW = new Intl.DateTimeFormat("ru-RU", { timeZone: TZ, weekday: "short" });
+      let out = "";
+      for (let i = 0; i < 5; i++){
+        const dd = new Date(asDate);
+        dd.setUTCDate(dd.getUTCDate() + i);
+        out += `<span>${fmtW.format(dd).replace(".", "")}</span>`;
+      }
+      return out;
+    }
+
+    function renderCards(asDate, TZ){
+      const cards = document.getElementById("cards");
+      if (!cards) return;
+
+      const stat = (k, v) => `
+        <div class="mini">
+          <div class="k">${k}</div>
+          <div class="v ${Number(v)<0 ? "neg" : ""}">${fmt(v)}</div>
+        </div>`;
+
+      const daysBlock = (daysArr) => `
+        <div class="card-days">
+          <div class="dow-grid">${dowLabelsHTML(asDate, TZ)}</div>
+          <div class="lights">${daysArr.map(light).join("")}</div>
+        </div>`;
+
+      cards.innerHTML = data.map(g => {
+        const hasKids = (g.children && g.children.length);
+        const detailsId = `det_${g.id}`;
+
+        const kidsHTML = (g.children || []).map(k => `
+          <div class="child">
+            <div class="child-name">↳ ${k.name}</div>
+            <div class="card-grid">
+              ${stat("Исполнение", k.exec)}
+              ${stat("График", k.plan)}
+              ${stat("Обеспечение", k.cover)}
+            </div>
+            ${daysBlock(k.days)}
+            <div style="margin-top:8px;font-weight:1000" class="${Number(k.delta)<0 ? "neg" : "pos"}">
+              Отклонение: ${fmt(k.delta)}
+            </div>
+          </div>
+        `).join("");
+
+        return `
+          <div class="card-item">
+            <div class="card-head">
+              <div>
+                <div class="card-title">${g.name}</div>
+                <div style="margin-top:6px;display:flex;gap:10px;align-items:center">
+                  ${hasKids ? `
+                    <button class="btn-mini" type="button" data-card-toggle="${detailsId}" aria-expanded="false">
+                      <span class="chev" aria-hidden="true"></span><span>Детали</span>
+                    </button>`
+                    : `<span style="font-size:12px;color:var(--muted);font-weight:900">Без деталей</span>`}
+                </div>
+              </div>
+              <div class="card-delta ${Number(g.delta)<0 ? "neg" : "pos"}">${fmt(g.delta)}</div>
+            </div>
+
+            <div class="card-grid">
+              ${stat("Исполнение", g.exec)}
+              ${stat("График", g.plan)}
+              ${stat("Обеспечение", g.cover)}
+            </div>
+
+            ${daysBlock(g.days)}
+
+            <div style="margin-top:8px;font-weight:1000" class="${Number(g.delta)<0 ? "neg" : "pos"}">
+              Отклонение: ${fmt(g.delta)}
+            </div>
+
+            ${hasKids ? `<div class="details" id="${detailsId}">${kidsHTML}</div>` : ``}
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Toggle cards details
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-card-toggle]");
+      if (!btn) return;
+      const id = btn.getAttribute("data-card-toggle");
+      const panel = document.getElementById(id);
+      if (!panel) return;
+
+      const isOpen = panel.classList.contains("open");
+      panel.classList.toggle("open", !isOpen);
+      btn.setAttribute("aria-expanded", String(!isOpen));
+      const label = btn.querySelector("span:last-child");
+      if (label) label.textContent = isOpen ? "Детали" : "Скрыть";
+    });
+
+
+    // Сворачивание/разворачивание групп
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-toggle]");
+      if (!btn) return;
+      const pid = btn.dataset.toggle;
+      const rows = [...document.querySelectorAll(`tr[data-parent="${pid}"]`)];
+      const hidden = rows.length && rows[0].classList.contains("hidden");
+      rows.forEach(r => r.classList.toggle("hidden", !hidden));
+      btn.textContent = hidden ? "▾" : "▸";
+    });
+  
+    // Auto-mark negative numbers in table
+    document.querySelectorAll("td.num").forEach(td => {
+      const v = td.textContent.replace(/\s/g,'').replace(',', '.');
+      if (!isNaN(v) && Number(v) < 0) td.classList.add("neg");
+    });
+
+
+    // === Dynamic date in header (after 9:00 shows current date) ===
+    // === Dynamic date in header: before 09:00 show yesterday, after 09:00 show today (with timezone) ===
+    (function(){
+      // Set the reporting timezone here:
+      const TZ = "Europe/Moscow"; // change if needed, e.g. "Europe/Berlin"
+
+      const reportHour = 9;
+      const reportMinute = 0;
+
+      const pad = (n) => String(n).padStart(2,"0");
+      const days = ["воскресенье","понедельник","вторник","среда","четверг","пятница","суббота"];
+
+      // Get "now" parts in the chosen timezone
+      const parts = new Intl.DateTimeFormat("ru-RU", {
+        timeZone: TZ,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      }).formatToParts(new Date()).reduce((acc, p) => {
+        if (p.type !== "literal") acc[p.type] = p.value;
+        return acc;
+      }, {});
+
+      const nowYear = Number(parts.year);
+      const nowMonth = Number(parts.month); // 1-12
+      const nowDay = Number(parts.day);
+      const nowHour = Number(parts.hour);
+      const nowMin = Number(parts.minute);
+
+      // Determine as-of date: yesterday if before 09:00, else today (in TZ)
+      // Create a Date object for "today" in TZ by parsing YYYY-MM-DD in TZ via formatter roundtrip
+      // We'll compute yesterday by subtracting one day from the TZ date components.
+      let asYear = nowYear, asMonth = nowMonth, asDay = nowDay;
+
+      const beforeCutoff = (nowHour < reportHour) || (nowHour === reportHour && nowMin < reportMinute);
+      if (beforeCutoff) {
+        // subtract one day safely using a UTC date and then format back in TZ
+        const utc = new Date(Date.UTC(nowYear, nowMonth - 1, nowDay, 12, 0, 0)); // noon UTC avoids DST edge
+        utc.setUTCDate(utc.getUTCDate() - 1);
+
+        const yParts = new Intl.DateTimeFormat("ru-RU", {
+          timeZone: TZ,
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
+        }).formatToParts(utc).reduce((acc, p) => {
+          if (p.type !== "literal") acc[p.type] = p.value;
+          return acc;
+        }, {});
+
+        asYear = Number(yParts.year);
+        asMonth = Number(yParts.month);
+        asDay = Number(yParts.day);
+      }
+
+      // Build day-of-week in TZ for as-of date
+      const asDateForDow = new Date(Date.UTC(asYear, asMonth - 1, asDay, 12, 0, 0));
+      const dowIdx = Number(new Intl.DateTimeFormat("en-US", { timeZone: TZ, weekday: "short" })
+        .formatToParts(asDateForDow).find(p => p.type === "weekday") ?
+        // fallback below
+        -1 : -1);
+
+      // More reliable: get weekday directly in ru-RU with TZ
+      const weekdayRu = new Intl.DateTimeFormat("ru-RU", { timeZone: TZ, weekday: "long" }).format(asDateForDow);
+
+      document.getElementById("asOf").textContent = `по состоянию на 9:00 утра`;
+
+      
+      // Render weekday labels over the 5 circles (starting from as-of date)
+      const head = document.getElementById("dowHead");
+      if (head) {
+        head.innerHTML = "";
+        const fmtW = new Intl.DateTimeFormat("ru-RU", { timeZone: TZ, weekday: "short" });
+        for (let i = 0; i < 5; i++) {
+          const dd = new Date(Date.UTC(asYear, asMonth - 1, asDay, 12, 0, 0));
+          dd.setUTCDate(dd.getUTCDate() + i);
+          const w = fmtW.format(dd).replace(".", "");
+          const span = document.createElement("span");
+          span.textContent = w;
+          head.appendChild(span);
+        }
+      }
+      // Render mobile cards
+      renderCards(asDateForDow, TZ);
+
+      document.getElementById("dayNum").textContent = asDay;
+      document.getElementById("dayName").textContent = weekdayRu;
+    })();
 </script>
 </body>
 </html>
