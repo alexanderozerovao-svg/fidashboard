@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Планирование отгрузок</title>
+
+  <style>
+    :root { --bg:#f5f7fb; --card:#fff; --text:#1f2a37; --muted:#6b7280; --line:#e5e7eb; }
+
+    body{ margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; background:var(--bg); color:var(--text); }
+    .wrap{ max-width:1100px; margin:18px auto; padding:0 14px; }
+    .card{ background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:0 8px 24px rgba(17,24,39,.06); }
+
+    /* ---------- LOGIN ---------- */
+    .login-wrap{ max-width:520px; margin:60px auto; padding:0 14px; }
+    .login-card{ padding:18px; }
+    .login-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+    .login-head h1{ margin:0; font-size:18px; }
+    .login-head .hint{ font-size:12px; color:var(--muted); }
+    .field{ display:flex; flex-direction:column; gap:6px; margin:12px 0; }
+    .field label{ font-size:12px; color:var(--muted); font-weight:700; }
+    .field input{
+      padding:10px 12px; border:1px solid var(--line); border-radius:10px; font-size:14px; outline:none;
+      background:#fff;
+    }
+    .row{ display:flex; gap:10px; align-items:center; justify-content:space-between; margin-top:14px; }
+    .btn{
+      border:1px solid var(--line); background:#fff; border-radius:10px; padding:10px 12px;
+      cursor:pointer; font-weight:700; font-size:14px;
+    }
+    .btn.primary{ background:#2f6da5; border-color:#2f6da5; color:#fff; }
+    .error{ margin-top:10px; font-size:12px; color:#c0392b; font-weight:700; display:none; }
+    .note{ margin-top:10px; font-size:12px; color:var(--muted); }
+
+    /* ---------- DASHBOARD ---------- */
+    .top{ display:flex; gap:16px; align-items:center; justify-content:space-between; padding:16px 18px; }
+    .stamp{ display:flex; flex-direction:column; gap:4px; }
+    .stamp .t{ font-size:12px; color:var(--muted); }
+    .stamp .n{ font-size:44px; font-weight:800; line-height:1; color:#2f6da5; }
+    .stamp .d{ font-size:18px; font-weight:700; text-transform:lowercase; }
+
+    .title{ text-align:center; flex:1; padding:0 10px; }
+    .title h1{ margin:0; font-size:16px; font-weight:700; }
+    .title p{ margin:6px 0 0; font-size:12px; color:var(--muted); }
+
+    .legend{ display:flex; gap:14px; justify-content:center; padding:10px 18px 16px; }
+    .pill{ display:flex; align-items:center; gap:8px; padding:8px 10px; border:1px solid var(--line); border-radius:999px; font-size:12px; color:var(--muted); }
+    .dot{ width:10px; height:10px; border-radius:50%; display:inline-block; }
+    .g{ background:#33a852; }
+    .y{ background:#f4c542; }
+    .r{ background:#e74c3c; }
+
+    table{ width:100%; border-collapse:separate; border-spacing:0; }
+    thead th{
+      font-size:12px; color:var(--muted); font-weight:700;
+      padding:10px 12px; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+      background:#fbfcfe; text-align:left; white-space:nowrap;
+    }
+    tbody td{ padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:middle; }
+    tbody tr.group{ background:#eef5ff; }
+    .name{ display:flex; align-items:center; gap:10px; }
+    .caret{ width:18px; height:18px; border:1px solid var(--line); border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:pointer; background:#fff; }
+    .indent{ padding-left:28px; color:#4b5563; }
+    .num{ text-align:right; font-variant-numeric: tabular-nums; }
+    .neg{ color:#c0392b; font-weight:700; }
+    .pos{ color:#1f7a3a; font-weight:700; }
+
+    .lights{ display:flex; gap:8px; justify-content:flex-start; }
+    .light{ width:11px; height:11px; border-radius:50%; border:1px solid rgba(0,0,0,.08); }
+
+    .subrow td{ font-size:12px; color:#4b5563; }
+    .hidden{ display:none; }
+
+    .dash-actions{ display:flex; justify-content:flex-end; padding:0 18px 12px; }
+  </style>
+</head>
+
+<body>
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="login-wrap">
+    <div class="card login-card">
+      <div class="login-head">
+        <h1>Вход</h1>
+        <div class="hint">Доступ к отчёту</div>
+      </div>
+
+      <form id="loginForm" autocomplete="off">
+        <div class="field">
+          <label for="login">Логин</label>
+          <input id="login" name="login" type="text" placeholder="Введите логин" />
+        </div>
+
+        <div class="field">
+          <label for="password">Пароль</label>
+          <input id="password" name="password" type="password" placeholder="Введите пароль" />
+        </div>
+
+        <div class="row">
+          <button class="btn primary" type="submit">Войти</button>
+          <button class="btn" type="button" id="clearBtn">Очистить</button>
+        </div>
+
+        <div id="loginError" class="error">Неверный логин или пароль.</div>
+        <div class="note">
+          Примечание: защита внутри HTML/JS — только “заглушка”; для реальной безопасности нужен сервер.
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DASHBOARD SCREEN -->
+  <div id="dashboardScreen" class="wrap" style="display:none;">
+    <div class="card">
+      <div class="top">
+        <div class="stamp">
+          <div class="t">По состоянию на 9:00</div>
+          <div class="n">16</div>
+          <div class="d">пятница</div>
+        </div>
+
+        <div class="title">
+          <h1>Планирование рабочих заявок на отгрузку нефтепродуктов ж/д транспортом</h1>
+          <p>В период с 16 января по 20 января 2026 г. включительно</p>
+        </div>
+
+        <div style="width:120px"></div>
+      </div>
+
+      <div class="dash-actions">
+        <button class="btn" id="logoutBtn" type="button">Выйти</button>
+      </div>
+
+      <div class="legend">
+        <div class="pill"><span class="dot g"></span>Обеспечено заявками</div>
+        <div class="pill"><span class="dot y"></span>Обеспечено заявками 50%</div>
+        <div class="pill"><span class="dot r"></span>Нет заявок</div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:320px">Номенклатура</th>
+            <th class="num" style="width:140px">Исполнение</th>
+            <th class="num" style="width:150px">График на 5 дней</th>
+            <th class="num" style="width:160px">Обеспечение</th>
+            <th style="width:190px">Пт–Вт</th>
+            <th class="num" style="width:120px">Отклонение</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // -----------------------------
+    // "Псевдо-авторизация" на клиенте
+    // -----------------------------
+    const AUTH_LOGIN = "andril";
+    const AUTH_PASS  = "2344";
+    const AUTH_KEY   = "dash_auth_ok"; // session flag
+
+    const loginScreen = document.getElementById("loginScreen");
+    const dashboardScreen = document.getElementById("dashboardScreen");
+    const loginForm = document.getElementById("loginForm");
+    const loginError = document.getElementById("loginError");
+    const clearBtn = document.getElementById("clearBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    function showDashboard() {
+      loginScreen.style.display = "none";
+      dashboardScreen.style.display = "";
+    }
+
+    function showLogin() {
+      dashboardScreen.style.display = "none";
+      loginScreen.style.display = "";
+      loginError.style.display = "none";
+      document.getElementById("login").focus();
+    }
+
+    // проверка "сессии" (живёт до закрытия вкладки/браузера)
+    if (sessionStorage.getItem(AUTH_KEY) === "1") {
+      showDashboard();
+    } else {
+      showLogin();
+    }
+
+    clearBtn.addEventListener("click", () => {
+      document.getElementById("login").value = "";
+      document.getElementById("password").value = "";
+      loginError.style.display = "none";
+      document.getElementById("login").focus();
+    });
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const l = (document.getElementById("login").value || "").trim();
+      const p = (document.getElementById("password").value || "").trim();
+
+      if (l === AUTH_LOGIN && p === AUTH_PASS) {
+        sessionStorage.setItem(AUTH_KEY, "1");
+        showDashboard();
+      } else {
+        loginError.style.display = "block";
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      sessionStorage.removeItem(AUTH_KEY);
+      showLogin();
+    });
+
+    // -----------------------------
+    // Данные дашборда (пример)
+    // -----------------------------
+    const data = [
+      {
+        id: "diesel",
+        name: "Дизельное топливо",
+        exec: 348,
+        plan: 31500,
+        cover: 22300,
+        days: ["g","g","g","y","r"],
+        delta: -9200,
+        children: [
+          { name:"ДТ-Л-К5 (Тингутa)", exec:0, plan:0, cover:3300, days:["g","g","g","g","r"], delta:0 },
+          { name:"ДТ-Э-К5", exec:0, plan:0, cover:19000, days:["g","g","g","y","r"], delta:0 },
+        ]
+      },
+      {
+        id: "gasoline",
+        name: "Бензины",
+        exec: -109,
+        plan: 8700,
+        cover: 7600,
+        days: ["g","g","g","g","r"],
+        delta: -1100,
+        children: [
+          { name:"АИ-92 (К4-5600т; К5-2000т)", exec:0, plan:0, cover:7600, days:["g","g","g","g","r"], delta:0 },
+        ]
+      },
+      { id:"bgs", name:"БГС/БСФ", exec:117, plan:4100, cover:12300, days:["g","g","g","g","g"], delta:8200, children:[] },
+      { id:"rt", name:"РТ/ТС", exec:-553, plan:8400, cover:16000, days:["g","g","g","g","g"], delta:7600, children:[] },
+      { id:"mazut", name:"Мазут", exec:0, plan:0, cover:2405, days:["g","g","g","g","g"], delta:2405, children:[] },
+    ];
+
+    // Рендер таблицы
+    const fmt = (n) => (n ?? 0).toLocaleString("ru-RU");
+    const light = (s) => `<span class="light ${s==='g'?'g':s==='y'?'y':'r'}"></span>`;
+    const deltaClass = (n) => n < 0 ? "neg" : "pos";
+    const tbody = document.getElementById("rows");
+
+    function renderTable() {
+      tbody.innerHTML = "";
+
+      data.forEach(group => {
+        const hasKids = (group.children && group.children.length);
+        const gid = "g_" + group.id;
+
+        const tr = document.createElement("tr");
+        tr.className = "group";
+        tr.innerHTML = `
+          <td>
+            <div class="name">
+              ${hasKids ? `<div class="caret" data-toggle="${gid}">▾</div>` : `<div style="width:18px"></div>`}
+              <div>${group.name}</div>
+            </div>
+          </td>
+          <td class="num">${fmt(group.exec)}</td>
+          <td class="num">${fmt(group.plan)}</td>
+          <td class="num">${fmt(group.cover)}</td>
+          <td>
+            <div class="lights">
+              ${group.days.map(light).join("")}
+            </div>
+          </td>
+          <td class="num ${deltaClass(group.delta)}">${fmt(group.delta)}</td>
+        `;
+        tbody.appendChild(tr);
+
+        (group.children || []).forEach((kid) => {
+          const tr2 = document.createElement("tr");
+          tr2.className = "subrow";
+          tr2.dataset.parent = gid;
+          tr2.innerHTML = `
+            <td class="indent">↳ ${kid.name}</td>
+            <td class="num">${fmt(kid.exec)}</td>
+            <td class="num">${fmt(kid.plan)}</td>
+            <td class="num">${fmt(kid.cover)}</td>
+            <td>
+              <div class="lights">
+                ${kid.days.map(light).join("")}
+              </div>
+            </td>
+            <td class="num ${deltaClass(kid.delta)}">${fmt(kid.delta)}</td>
+          `;
+          tbody.appendChild(tr2);
+        });
+      });
+    }
+
+    renderTable();
+
+    // Сворачивание/разворачивание групп
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-toggle]");
+      if (!btn) return;
+      const pid = btn.dataset.toggle;
+      const rows = [...document.querySelectorAll(`tr[data-parent="${pid}"]`)];
+      const hidden = rows.length && rows[0].classList.contains("hidden");
+      rows.forEach(r => r.classList.toggle("hidden", !hidden));
+      btn.textContent = hidden ? "▾" : "▸";
+    });
+  </script>
+</body>
+</html>
