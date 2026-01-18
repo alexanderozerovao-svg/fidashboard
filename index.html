@@ -51,7 +51,7 @@
     .y{ background:#f4c542; }
     .r{ background:#e74c3c; }
 
-    table{ width:100%; border-collapse:separate; border-spacing:0; }
+    table{ width:100%; border-collapse:separate; border-spacing:0; min-width:860px; }
     thead th{
       font-size:12px; color:var(--muted); font-weight:700;
       padding:10px 12px; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
@@ -73,9 +73,38 @@
     .hidden{ display:none; }
 
     .dash-actions{ display:flex; justify-content:flex-end; padding:0 18px 12px; }
+
+    /* ---------- MOBILE ---------- */
+    .table-scroll{
+      overflow-x:auto;
+      -webkit-overflow-scrolling: touch;
+      border-top:1px solid var(--line);
+      border-bottom-left-radius:14px;
+      border-bottom-right-radius:14px;
+    }
+
+    @media (max-width: 768px){
+      .wrap{ margin:10px auto; padding:0 10px; }
+      .top{ flex-direction:column; align-items:stretch; gap:10px; padding:14px; }
+      .title{ text-align:left; padding:0; }
+      .title h1{ font-size:14px; }
+      .title p{ font-size:12px; }
+      .stamp{ flex-direction:row; align-items:baseline; justify-content:space-between; }
+      .stamp .n{ font-size:34px; }
+      .stamp .d{ font-size:14px; }
+      .legend{ flex-wrap:wrap; justify-content:flex-start; gap:8px; padding:10px 12px 12px; }
+      .pill{ font-size:12px; padding:7px 9px; }
+      thead th, tbody td{ padding:9px 10px; }
+      .dash-actions{ padding:0 12px 10px; }
+    }
+
+    @media (max-width: 420px){
+      .stamp .t{ display:none; }
+      .caret{ width:22px; height:22px; }
+      .indent{ padding-left:18px; }
+    }
   </style>
 </head>
-
 <body>
   <!-- LOGIN SCREEN -->
   <div id="loginScreen" class="login-wrap">
@@ -84,32 +113,24 @@
         <h1>Вход</h1>
         <div class="hint">Доступ к отчёту</div>
       </div>
-
       <form id="loginForm" autocomplete="off">
         <div class="field">
           <label for="login">Логин</label>
-          <input id="login" name="login" type="text" placeholder="Введите логин" />
+          <input id="login" type="text" />
         </div>
-
         <div class="field">
           <label for="password">Пароль</label>
-          <input id="password" name="password" type="password" placeholder="Введите пароль" />
+          <input id="password" type="password" />
         </div>
-
         <div class="row">
           <button class="btn primary" type="submit">Войти</button>
-          <button class="btn" type="button" id="clearBtn">Очистить</button>
         </div>
-
         <div id="loginError" class="error">Неверный логин или пароль.</div>
-        <div class="note">
-          Примечание: защита внутри HTML/JS — только “заглушка”; для реальной безопасности нужен сервер.
-        </div>
       </form>
     </div>
   </div>
 
-  <!-- DASHBOARD SCREEN -->
+  <!-- DASHBOARD -->
   <div id="dashboardScreen" class="wrap" style="display:none;">
     <div class="card">
       <div class="top">
@@ -118,17 +139,14 @@
           <div class="n">16</div>
           <div class="d">пятница</div>
         </div>
-
         <div class="title">
           <h1>Планирование рабочих заявок на отгрузку нефтепродуктов ж/д транспортом</h1>
           <p>В период с 16 января по 20 января 2026 г. включительно</p>
         </div>
-
-        <div style="width:120px"></div>
       </div>
 
       <div class="dash-actions">
-        <button class="btn" id="logoutBtn" type="button">Выйти</button>
+        <button class="btn" id="logoutBtn">Выйти</button>
       </div>
 
       <div class="legend">
@@ -137,182 +155,64 @@
         <div class="pill"><span class="dot r"></span>Нет заявок</div>
       </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th style="width:320px">Номенклатура</th>
-            <th class="num" style="width:140px">Исполнение</th>
-            <th class="num" style="width:150px">График на 5 дней</th>
-            <th class="num" style="width:160px">Обеспечение</th>
-            <th style="width:190px">Пт–Вт</th>
-            <th class="num" style="width:120px">Отклонение</th>
-          </tr>
-        </thead>
-        <tbody id="rows"></tbody>
-      </table>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Номенклатура</th>
+              <th class="num">Исполнение</th>
+              <th class="num">График на 5 дней</th>
+              <th class="num">Обеспечение</th>
+              <th>Пт–Вт</th>
+              <th class="num">Отклонение</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <script>
-    // -----------------------------
-    // "Псевдо-авторизация" на клиенте
-    // -----------------------------
-    const AUTH_LOGIN = "andril";
-    const AUTH_PASS  = "2344";
-    const AUTH_KEY   = "dash_auth_ok"; // session flag
+<script>
+const AUTH_LOGIN="andril",AUTH_PASS="2344",AUTH_KEY="dash_auth_ok";
+const loginScreen=document.getElementById("loginScreen"),
+dash=document.getElementById("dashboardScreen"),
+form=document.getElementById("loginForm"),
+err=document.getElementById("loginError"),
+logoutBtn=document.getElementById("logoutBtn");
 
-    const loginScreen = document.getElementById("loginScreen");
-    const dashboardScreen = document.getElementById("dashboardScreen");
-    const loginForm = document.getElementById("loginForm");
-    const loginError = document.getElementById("loginError");
-    const clearBtn = document.getElementById("clearBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
+function showDash(){loginScreen.style.display="none";dash.style.display="";}
+function showLogin(){dash.style.display="none";loginScreen.style.display="";}
 
-    function showDashboard() {
-      loginScreen.style.display = "none";
-      dashboardScreen.style.display = "";
-    }
+if(sessionStorage.getItem(AUTH_KEY)==="1"){showDash();}
 
-    function showLogin() {
-      dashboardScreen.style.display = "none";
-      loginScreen.style.display = "";
-      loginError.style.display = "none";
-      document.getElementById("login").focus();
-    }
+form.onsubmit=e=>{
+e.preventDefault();
+if(login.value===AUTH_LOGIN&&password.value===AUTH_PASS){
+sessionStorage.setItem(AUTH_KEY,"1");showDash();
+}else{err.style.display="block";}
+};
+logoutBtn.onclick=()=>{sessionStorage.removeItem(AUTH_KEY);location.reload();};
 
-    // проверка "сессии" (живёт до закрытия вкладки/браузера)
-    if (sessionStorage.getItem(AUTH_KEY) === "1") {
-      showDashboard();
-    } else {
-      showLogin();
-    }
+const data=[
+{ id:"diesel",name:"Дизельное топливо",exec:348,plan:31500,cover:22300,days:["g","g","g","y","r"],delta:-9200,children:[]}
+];
 
-    clearBtn.addEventListener("click", () => {
-      document.getElementById("login").value = "";
-      document.getElementById("password").value = "";
-      loginError.style.display = "none";
-      document.getElementById("login").focus();
-    });
+const tbody=document.getElementById("rows");
+const fmt=n=>(n??0).toLocaleString("ru-RU");
+const light=s=>`<span class="light ${s}"></span>`;
 
-    loginForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const l = (document.getElementById("login").value || "").trim();
-      const p = (document.getElementById("password").value || "").trim();
-
-      if (l === AUTH_LOGIN && p === AUTH_PASS) {
-        sessionStorage.setItem(AUTH_KEY, "1");
-        showDashboard();
-      } else {
-        loginError.style.display = "block";
-      }
-    });
-
-    logoutBtn.addEventListener("click", () => {
-      sessionStorage.removeItem(AUTH_KEY);
-      showLogin();
-    });
-
-    // -----------------------------
-    // Данные дашборда (пример)
-    // -----------------------------
-    const data = [
-      {
-        id: "diesel",
-        name: "Дизельное топливо",
-        exec: 348,
-        plan: 31500,
-        cover: 22300,
-        days: ["g","g","g","y","r"],
-        delta: -9200,
-        children: [
-          { name:"ДТ-Л-К5 (Тингутa)", exec:0, plan:0, cover:3300, days:["g","g","g","g","r"], delta:0 },
-          { name:"ДТ-Э-К5", exec:0, plan:0, cover:19000, days:["g","g","g","y","r"], delta:0 },
-        ]
-      },
-      {
-        id: "gasoline",
-        name: "Бензины",
-        exec: -109,
-        plan: 8700,
-        cover: 7600,
-        days: ["g","g","g","g","r"],
-        delta: -1100,
-        children: [
-          { name:"АИ-92 (К4-5600т; К5-2000т)", exec:0, plan:0, cover:7600, days:["g","g","g","g","r"], delta:0 },
-        ]
-      },
-      { id:"bgs", name:"БГС/БСФ", exec:117, plan:4100, cover:12300, days:["g","g","g","g","g"], delta:8200, children:[] },
-      { id:"rt", name:"РТ/ТС", exec:-553, plan:8400, cover:16000, days:["g","g","g","g","g"], delta:7600, children:[] },
-      { id:"mazut", name:"Мазут", exec:0, plan:0, cover:2405, days:["g","g","g","g","g"], delta:2405, children:[] },
-    ];
-
-    // Рендер таблицы
-    const fmt = (n) => (n ?? 0).toLocaleString("ru-RU");
-    const light = (s) => `<span class="light ${s==='g'?'g':s==='y'?'y':'r'}"></span>`;
-    const deltaClass = (n) => n < 0 ? "neg" : "pos";
-    const tbody = document.getElementById("rows");
-
-    function renderTable() {
-      tbody.innerHTML = "";
-
-      data.forEach(group => {
-        const hasKids = (group.children && group.children.length);
-        const gid = "g_" + group.id;
-
-        const tr = document.createElement("tr");
-        tr.className = "group";
-        tr.innerHTML = `
-          <td>
-            <div class="name">
-              ${hasKids ? `<div class="caret" data-toggle="${gid}">▾</div>` : `<div style="width:18px"></div>`}
-              <div>${group.name}</div>
-            </div>
-          </td>
-          <td class="num">${fmt(group.exec)}</td>
-          <td class="num">${fmt(group.plan)}</td>
-          <td class="num">${fmt(group.cover)}</td>
-          <td>
-            <div class="lights">
-              ${group.days.map(light).join("")}
-            </div>
-          </td>
-          <td class="num ${deltaClass(group.delta)}">${fmt(group.delta)}</td>
-        `;
-        tbody.appendChild(tr);
-
-        (group.children || []).forEach((kid) => {
-          const tr2 = document.createElement("tr");
-          tr2.className = "subrow";
-          tr2.dataset.parent = gid;
-          tr2.innerHTML = `
-            <td class="indent">↳ ${kid.name}</td>
-            <td class="num">${fmt(kid.exec)}</td>
-            <td class="num">${fmt(kid.plan)}</td>
-            <td class="num">${fmt(kid.cover)}</td>
-            <td>
-              <div class="lights">
-                ${kid.days.map(light).join("")}
-              </div>
-            </td>
-            <td class="num ${deltaClass(kid.delta)}">${fmt(kid.delta)}</td>
-          `;
-          tbody.appendChild(tr2);
-        });
-      });
-    }
-
-    renderTable();
-
-    // Сворачивание/разворачивание групп
-    document.addEventListener("click", (e) => {
-      const btn = e.target.closest("[data-toggle]");
-      if (!btn) return;
-      const pid = btn.dataset.toggle;
-      const rows = [...document.querySelectorAll(`tr[data-parent="${pid}"]`)];
-      const hidden = rows.length && rows[0].classList.contains("hidden");
-      rows.forEach(r => r.classList.toggle("hidden", !hidden));
-      btn.textContent = hidden ? "▾" : "▸";
-    });
-  </script>
+data.forEach(g=>{
+tbody.innerHTML+=`
+<tr class="group">
+<td>${g.name}</td>
+<td class="num">${fmt(g.exec)}</td>
+<td class="num">${fmt(g.plan)}</td>
+<td class="num">${fmt(g.cover)}</td>
+<td><div class="lights">${g.days.map(light).join("")}</div></td>
+<td class="num ${g.delta<0?"neg":"pos"}">${fmt(g.delta)}</td>
+</tr>`;
+});
+</script>
 </body>
 </html>
