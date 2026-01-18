@@ -449,6 +449,41 @@
       .cards{ display:block; }
     }
 
+
+    /* === MENU SCREEN TILES === */
+    .menu-tile{
+      width:100%;
+      border:1px solid rgba(17,24,39,.12);
+      background:#fff;
+      border-radius:16px;
+      padding:14px 14px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      cursor:pointer;
+      text-align:left;
+      box-shadow:0 10px 26px rgba(17,24,39,.08);
+    }
+    .menu-tile:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+      box-shadow:none;
+    }
+    .menu-icon{
+      width:44px;height:44px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg, #0b3f6d, #2f6da5);
+      color:#fff;
+      font-weight:900;
+      font-size:18px;
+      flex:0 0 auto;
+    }
+    .menu-title{font-weight:1000;color:#0b3f6d;font-size:13px;line-height:1.15}
+    .menu-sub{margin-top:4px;font-size:11px;color:var(--muted);font-weight:800}
+    @media (max-width: 768px){
+      #menuScreen .menu-grid{ grid-template-columns: 1fr !important; }
+    }
+
 </style>
 </head>
 
@@ -500,6 +535,44 @@
       </form>
     </div>
   </div>
+
+  
+  <!-- MENU SCREEN -->
+  <div id="menuScreen" class="wrap" style="display:none;">
+    <div class="card" style="padding:18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div style="font-weight:900;color:#0b3f6d;">Меню</div>
+        <button class="btn" id="menuLogoutBtn" type="button">Выйти</button>
+      </div>
+
+      <div style="margin-top:14px;display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:12px;" class="menu-grid">
+        <button type="button" class="menu-tile" id="tileCoverage">
+          <div class="menu-icon" aria-hidden="true">✓</div>
+          <div class="menu-text">
+            <div class="menu-title">Обеспечение заявками</div>
+            <div class="menu-sub">Дашборд</div>
+          </div>
+        </button>
+
+        <button type="button" class="menu-tile" disabled>
+          <div class="menu-icon" aria-hidden="true">🗓</div>
+          <div class="menu-text">
+            <div class="menu-title">План-график</div>
+            <div class="menu-sub">Скоро</div>
+          </div>
+        </button>
+
+        <button type="button" class="menu-tile" disabled>
+          <div class="menu-icon" aria-hidden="true">📊</div>
+          <div class="menu-text">
+            <div class="menu-title">Отчёты</div>
+            <div class="menu-sub">Скоро</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
 
   <!-- DASHBOARD SCREEN -->
   <div id="dashboardScreen" class="wrap" style="display:none;">
@@ -567,14 +640,21 @@
       dashboardScreen.style.display = "";
     }
 
-    function showLogin() {
+    
+    function showMenu(){
+      loginScreen.style.display = "none";
+      dashboardScreen.style.display = "none";
+      const menu = document.getElementById("menuScreen");
+      if (menu) menu.style.display = "";
+    }
+function showLogin() {
       dashboardScreen.style.display = "none";
       loginScreen.style.display = "";
       loginError.style.display = "none";
       document.getElementById("login").focus();
     }
 
-    if (sessionStorage.getItem(AUTH_KEY) === "1") showDashboard(); else showLogin();
+    if (sessionStorage.getItem(AUTH_KEY) === "1") showMenu(); else showLogin();
 
     clearBtn.addEventListener("click", () => {
       document.getElementById("login").value = "";
@@ -590,7 +670,7 @@
 
       if (l === AUTH_LOGIN && p === AUTH_PASS) {
         sessionStorage.setItem(AUTH_KEY, "1");
-        showDashboard();
+        showMenu();
       } else {
         loginError.style.display = "block";
       }
@@ -901,6 +981,26 @@
       document.getElementById("dayNum").textContent = asDay;
       document.getElementById("dayName").textContent = weekdayRu;
     })();
+
+    // Menu navigation
+    const menuScreen = document.getElementById("menuScreen");
+    const menuLogoutBtn = document.getElementById("menuLogoutBtn");
+    const tileCoverage = document.getElementById("tileCoverage");
+
+    if (menuLogoutBtn){
+      menuLogoutBtn.addEventListener("click", () => {
+        sessionStorage.removeItem(AUTH_KEY);
+        showLogin();
+      });
+    }
+
+    if (tileCoverage){
+      tileCoverage.addEventListener("click", () => {
+        if (menuScreen) menuScreen.style.display = "none";
+        showDashboard();
+      });
+    }
+
 </script>
 </body>
 </html>
