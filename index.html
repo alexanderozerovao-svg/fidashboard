@@ -621,68 +621,141 @@
   </div>
 
   <script>
+    
     // -----------------------------
-    // Псевдо-авторизация на клиенте
+    // Авторизация через сервер (Cloudflare Pages Functions)
+    // API: POST /api/login, GET /api/me, POST /api/logout
+    // KV keys: user:<login> -> {"hash":"salt:100000:hash","role":"admin|viewer"}
     // -----------------------------
-    const AUTH_LOGIN = "andril";
-    const AUTH_PASS  = "2344";
-    const AUTH_KEY   = "dash_auth_ok";
+    const AUTH_KEY = "dash_auth_ok"; // legacy (no longer used for auth), kept to avoid breaking old code
+    let currentUser = null;
+    let currentRole = null;
 
     const loginScreen = document.getElementById("loginScreen");
     const dashboardScreen = document.getElementById("dashboardScreen");
+    const menuScreen = document.getElementById("menuScreen");
     const loginForm = document.getElementById("loginForm");
     const loginError = document.getElementById("loginError");
     const clearBtn = document.getElementById("clearBtn");
     const logoutBtn = document.getElementById("logoutBtn");
+    const menuLogoutBtn = document.getElementById("menuLogoutBtn");
+    const tileCoverage = document.getElementById("tileCoverage");
 
     function showDashboard() {
-      loginScreen.style.display = "none";
-      dashboardScreen.style.display = "";
+      if (menuScreen) menuScreen.style.display = "none";
+      if (loginScreen) loginScreen.style.display = "none";
+      if (dashboardScreen) dashboardScreen.style.display = "";
     }
 
-    
     function showMenu(){
-      loginScreen.style.display = "none";
-      dashboardScreen.style.display = "none";
-      const menu = document.getElementById("menuScreen");
-      if (menu) menu.style.display = "";
-    }
-function showLogin() {
-      dashboardScreen.style.display = "none";
-      loginScreen.style.display = "";
-      loginError.style.display = "none";
-      document.getElementById("login").focus();
+      if (loginScreen) loginScreen.style.display = "none";
+      if (dashboardScreen) dashboardScreen.style.display = "none";
+      if (menuScreen) menuScreen.style.display = "";
     }
 
-    if (sessionStorage.getItem(AUTH_KEY) === "1") showMenu(); else showLogin();
+    function showLogin() {
+      if (dashboardScreen) dashboardScreen.style.display = "none";
+      if (menuScreen) menuScreen.style.display = "none";
+      if (loginScreen) loginScreen.style.display = "";
+      if (loginError) loginError.style.display = "none";
+      const inp = document.getElementById("login");
+      if (inp) inp.focus();
+    }
 
-    clearBtn.addEventListener("click", () => {
-      document.getElementById("login").value = "";
-      document.getElementById("password").value = "";
-      loginError.style.display = "none";
-      document.getElementById("login").focus();
-    });
+    function showLoginError(msg){
+      if (!loginError) return;
+      loginError.textContent = msg || "Неверный логин или пароль.";
+      loginError.style.display = "block";
+    }
 
-    loginForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const l = (document.getElementById("login").value || "").trim();
-      const p = (document.getElementById("password").value || "").trim();
+    async function apiLogin(login, password){
+      const r = await fetch("/api/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ login, password })
+      });
+      return r.ok ? await r.json() : null;
+    }
 
-      if (l === AUTH_LOGIN && p === AUTH_PASS) {
-        sessionStorage.setItem(AUTH_KEY, "1");
+    async function apiMe(){
+      const r = await fetch("/api/me", { credentials: "include" });
+      return r.ok ? await r.json() : { ok:false };
+    }
+
+    async function apiLogout(){
+      await fetch("/api/logout", { method:"POST", credentials:"include" });
+    }
+
+    function applyRoleUI(){
+      // Example: viewers can only open dashboard tile; extend later if you add more tiles
+      // If you add tiles with ids, you can disable them here.
+      // currentRole can be "admin" or "viewer".
+      // For now, keep everything same but can disable future tiles:
+      // const tileReports = document.getElementById("tileReports"); if (tileReports) tileReports.disabled = (currentRole !== "admin");
+    }
+
+    // Initial auth check
+    (async () => {
+      const me = await apiMe();
+      if (me && me.ok) {
+        currentUser = me.login || null;
+        currentRole = me.role || null;
+        applyRoleUI();
         showMenu();
       } else {
-        loginError.style.display = "block";
+        showLogin();
       }
-    });
+    })();
 
-    logoutBtn.addEventListener("click", () => {
-      sessionStorage.removeItem(AUTH_KEY);
+    if (clearBtn){
+      clearBtn.addEventListener("click", () => {
+        const l = document.getElementById("login");
+        const p = document.getElementById("password");
+        if (l) l.value = "";
+        if (p) p.value = "";
+        if (loginError) loginError.style.display = "none";
+        const inp = document.getElementById("login");
+        if (inp) inp.focus();
+      });
+    }
+
+    if (loginForm){
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const l = (document.getElementById("login").value || "").trim();
+        const p = (document.getElementById("password").value || "");
+        if (!l || !p) return showLoginError("Введите логин и пароль.");
+
+        const res = await apiLogin(l, p);
+        if (res && res.ok) {
+          currentUser = res.login || l;
+          currentRole = res.role || null;
+          applyRoleUI();
+          showMenu();
+        } else {
+          showLoginError("Неверный логин или пароль.");
+        }
+      });
+    }
+
+    async function doLogout(){
+      try { await apiLogout(); } catch(e) {}
+      currentUser = null;
+      currentRole = null;
       showLogin();
-    });
+    }
+
+    if (logoutBtn) logoutBtn.addEventListener("click", doLogout);
+    if (menuLogoutBtn) menuLogoutBtn.addEventListener("click", doLogout);
+
+    if (tileCoverage){
+      tileCoverage.addEventListener("click", () => showDashboard());
+    }
 
     // -----------------------------
     // Данные дашборда (полный набор)
+ (полный набор)
     // -----------------------------
     const data = [
       {
@@ -981,19 +1054,6 @@ function showLogin() {
       document.getElementById("dayNum").textContent = asDay;
       document.getElementById("dayName").textContent = weekdayRu;
     })();
-
-    // Menu navigation
-    const menuScreen = document.getElementById("menuScreen");
-    const menuLogoutBtn = document.getElementById("menuLogoutBtn");
-    const tileCoverage = document.getElementById("tileCoverage");
-
-    if (menuLogoutBtn){
-      menuLogoutBtn.addEventListener("click", () => {
-        sessionStorage.removeItem(AUTH_KEY);
-        showLogin();
-      });
-    }
-
     if (tileCoverage){
       tileCoverage.addEventListener("click", () => {
         if (menuScreen) menuScreen.style.display = "none";
