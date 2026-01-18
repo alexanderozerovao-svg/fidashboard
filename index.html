@@ -132,7 +132,6 @@
     @media (max-width: 420px){
       .login-wrap{ margin:34px auto; }
       .login-card{ padding:18px; }
-      .brand-mark{ width:40px; height:40px; border-radius:12px; }
       .brand-name{ font-size:16px; }
     }
 
@@ -213,15 +212,6 @@
       gap:10px;
       margin-bottom:8px;
     }
-
-    .brand-mark{
-      width:64px;
-      height:64px;
-      border-radius:18px;
-      overflow:hidden;
-      box-shadow:0 14px 26px rgba(11,63,109,.20);
-    }
-    .brand-mark svg{ width:64px; height:64px; display:block; }
 
     .brand-name{
       font-weight:900;
@@ -306,8 +296,6 @@
       body::before{ height:160px; }
       .login-wrap{ margin:40px auto; }
       .login-card{ padding:20px; border-radius:16px; }
-      .brand-mark{ width:56px; height:56px; border-radius:16px; }
-      .brand-mark svg{ width:56px; height:56px; }
       .brand-name{ font-size:18px; }
     }
 
@@ -493,6 +481,53 @@
   text-align: center;
 }
 
+
+/* ForteInvest logo on login */
+.login-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2px 0 10px;
+}
+.login-logo img {
+  max-width: 320px;
+  width: min(320px, 78vw);
+  height: auto;
+}
+
+
+/* Remove extra spacing after icon removal */
+#loginScreen .login-header,
+#loginScreen .brand,
+#loginScreen .logo-wrap {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+
+/* Remove brand icon completely */
+#loginScreen .brand-mark{ display:none !important; }
+#loginScreen .brand-text{ margin-top: 0 !important; }
+
+
+/* Center 'Вход в дашборд' vertically within login header */
+#loginScreen .brand-sub{
+  width: 100%;
+  text-align: center;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin: 8px 0 16px;
+}
+
+
+/* Force subtitle centered under logo */
+#loginScreen .login-subtitle{
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+}
+
 </style>
 </head>
 
@@ -501,23 +536,8 @@
   <div id="loginScreen" class="login-wrap">
     <div class="card login-card">
       <div class="brand brand-vertical">
-        <div class="brand-mark" aria-hidden="true">
-  <svg viewBox="0 0 64 64" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#0b3f6d"/>
-        <stop offset="100%" stop-color="#2f6da5"/>
-      </linearGradient>
-    </defs>
-    <rect x="0" y="0" width="64" height="64" rx="14" fill="url(#g1)"/>
-    <path d="M14 38c14-2 22-10 36-10-6 10-18 20-36 20 2-3 2-7 0-10z"
-          fill="#ffffff"/>
-    <path d="M22 18c10 0 18 4 28 10-12 0-20 2-28 6-2-4-2-10 0-16z"
-          fill="#ffffff" opacity="0.9"/>
-  </svg>
-</div>
-        <div class="brand-text">
-          <div class="brand-name">ФортеИнвест</div>
+<div class="brand-text">
+          <div class="login-logo"><img src="forteinvest_logo_transparent.png" alt="ФортеИнвест"></div>
           <div class="brand-sub">Вход в дашборд</div>
         </div>
       </div>
@@ -556,7 +576,7 @@
 
       <div style="margin-top:14px;display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:12px;" class="menu-grid">
         <button type="button" class="menu-tile" id="tileCoverage">
-          <div class="menu-icon" aria-hidden="true">✓</div>
+          
           <div class="menu-text">
             <div class="menu-title">Обеспечение заявками</div>
             <div class="menu-sub">Дашборд</div>
@@ -564,7 +584,7 @@
         </button>
 
         <button type="button" class="menu-tile" disabled>
-          <div class="menu-icon" aria-hidden="true">🗓</div>
+          
           <div class="menu-text">
             <div class="menu-title">План-график</div>
             <div class="menu-sub">Скоро</div>
@@ -572,7 +592,7 @@
         </button>
 
         <button type="button" class="menu-tile" disabled>
-          <div class="menu-icon" aria-hidden="true">📊</div>
+          
           <div class="menu-text">
             <div class="menu-title">Отчёты</div>
             <div class="menu-sub">Скоро</div>
